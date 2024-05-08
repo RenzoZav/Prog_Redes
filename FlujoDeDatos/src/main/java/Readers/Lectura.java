@@ -80,7 +80,7 @@ public class Lectura {
 		Double numeroConComa = Double.parseDouble( datoLeido );  // 556.7
 
 		
-		Double resultado = (Int)numeroConComa * numero;  //   (Int)numeroConComa  =>  556
+	//	Double resultado = (Int)numeroConComa * numero;  //   (Int)numeroConComa  =>  556
 	}
 	
 	
