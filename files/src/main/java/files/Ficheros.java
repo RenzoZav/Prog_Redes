@@ -3,11 +3,12 @@ package files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 public class Ficheros {
 	
 	private File archivo;
-	
+	private PrintStream ps;
 	
 	public Ficheros() 
 	{
@@ -23,6 +24,7 @@ public class Ficheros {
 	public void createrFilePrintStream(File a) 
 	{
 		FileOutputStream fos = null;
+		ps = new PrintStream(fos);
 		
 		try {
 			fos = new FileOutputStream(a);
