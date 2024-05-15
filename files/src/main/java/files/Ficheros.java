@@ -24,14 +24,25 @@ public class Ficheros {
 	public void createrFilePrintStream(File a) 
 	{
 		FileOutputStream fos = null;
-		ps = new PrintStream(fos);
+		
 		
 		try {
 			fos = new FileOutputStream(a);
+			ps = new PrintStream(fos,true); //mode append
+			
+			ps.println("Mati: Soy gay, lo confieso");
+			ps.println("jsjsjsj");
+			
+			ps.flush();
+			
+			
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		
 	}
 }
+
+
 
