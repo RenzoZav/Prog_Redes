@@ -1,9 +1,11 @@
 package files;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -35,6 +37,37 @@ public class Ficheros {
 	public File getArchivo()
 	{
 		return this.archivo;
+	}
+	
+	public void datosArchivos() {
+		try {
+			ps= new PrintStream(System.out);
+		ps.println("Name: "+archivo.getName());//Muestra nombre del archivo
+		ps.println("Path: "+archivo.getPath());//Ruta
+		ps.println("PathAbs"+archivo.getAbsolutePath());//Ruta absoluta
+		ps.println("PathCannon:"+archivo.getCanonicalPath());
+		ps.println("Contenedor del archivo: "+ archivo.getParentFile());
+		ps.println("Parent"+ archivo.getParent());
+		ps.println("Tamaño: "+archivo.getTotalSpace());
+		ps.println("Ejecutable: "+archivo.canExecute());
+		ps.println("Acceso de lectura: "+archivo.canRead());
+		ps.println("Acceso de escritura"+ archivo.canWrite());
+		ps.println("Esta oculta: "+ archivo.isHidden());
+		ps.println("existe?: "+archivo.exists());
+		ps.println("Es archivo?: "+archivo.isFile());
+		ps.println("Es carpeta: "+archivo.isDirectory());
+		
+		
+		//ps.println("Elimina cuando cierra el programa: " archivo.deleteOnExit());
+	
+		//ps.println("Renombre: " + archivo.renameTo("furro.txt"));
+		//ps.println("Borrar Archvo"+archivo.delete());
+		//ps.println("Crear archivos nuevos:"+ archivo.createNewFile());
+		//ps.println("Crear Archivo: "+archivo.mkdir());
+	}catch(IOException e){
+		e.printStackTrace();
+	}
+		
 	}
 	
 	public void createFilePrintStream(File a) {
@@ -72,7 +105,7 @@ public class Ficheros {
 				a.createNewFile();
 			}			
 			
-			fw = new FileWriter( a , true);
+			fw = new FileWriter( a , false);
 			pw = new PrintWriter(fw);
 			
 			pw.println("Otro MUNDO");		
@@ -124,5 +157,83 @@ public class Ficheros {
 		}
 		
 	}
-}
+	
+	//Lectura de archivos
+	public String leerCharChar(File a) {
+		FileReader fr = null;
+		String texto="";
+		try {
+			fr = new FileReader(a);
+			int letra;
+			
+			while((letra = fr.read()) != -1)
+			{
+				texto +=(char)letra;
+			}
+		}catch(FileNotFoundException e){
+			e.printStackTrace();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				fr.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return texto;
+	}
+	
+	public String leerConReader(File a) {
+		FileReader fr = null;
 
+		BufferedReader br = null;
+
+		String texto = "";
+
+		try {
+
+		fr = new FileReader(a);
+
+		br = new BufferedReader(fr);
+
+		String linea = "";
+
+		try {
+
+		while((linea = br.readLine()) != null) {
+
+		texto += linea;
+
+		}
+
+		} catch (IOException e) {
+
+		e.printStackTrace();
+
+		}
+
+		} catch (FileNotFoundException e) {
+
+		e.printStackTrace();
+
+		}finally {
+
+		try {
+
+		br.close();
+
+		fr.close();
+
+		} catch (IOException e) {
+
+		e.printStackTrace();
+
+		}
+
+		}
+
+		return texto;
+}
+}
