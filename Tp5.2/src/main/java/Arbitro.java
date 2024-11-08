@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Arbitro {
@@ -21,7 +20,8 @@ public class Arbitro {
 
     public void iniciarCarrera(List<Equipo> equipos) throws InterruptedException {
         tiempoInicio = System.currentTimeMillis();
-        logger.info("¡Comienza la carrera!");
+        //logger.info("¡Comienza la carrera!");
+        System.out.println(Colores.RESET+"¡Comienza la carrera!");
 
         List<Thread> hilosAtletas = new ArrayList<>();
 
@@ -50,25 +50,49 @@ public class Arbitro {
         long tiempoFin = System.currentTimeMillis();
         long duracion = tiempoFin - tiempoInicio;
 
-        logger.info("¡La carrera ha terminado!");
+        //logger.info("¡La carrera ha terminado!");
+        System.out.println(Colores.RESET+"¡La carrera ha terminado!");
+        mostrarPodio(equipos);
 
     }
-
+    private void mostrarPodio(List<Equipo> equipos) {
+    	equipos.sort((equipo1, equipo2)-> Long.compare(equipo1.getTiempoTotal(), equipo2.getTiempoTotal()));
+    	//logger.info("\nResultados de la carrera:");
+    	System.out.println("Resultados de la carrera:");
+    	for (int i = 0; i < equipos.size(); i++) {
+            Equipo equipo = equipos.get(i);
+            String puesto = "";
+            switch (i) {
+                case 0:
+                	puesto = "1er lugar";
+                	break;
+                case 1:
+                	puesto = "2do lugar";
+                	break;
+                case 2:
+                	puesto = "3er lugar";
+                	break;
+                default:
+                	puesto = (i + 1) + "er lugar";
+                	break;
+            }
+            //logger.info(String.format("%s: %s - Tiempo total: %d ms", puesto, equipo.getNombre(), equipo.getTiempoTotal()));
+            System.out.println(String.format("%s%s: %s - Tiempo total: %d ms",equipo.getColor(),  puesto, equipo.getNombre(), equipo.getTiempoTotal()));
+        }
+    }
+    
     public void registrarProgreso(Equipo equipo, Atleta atleta, long tiempoInicioAtleta) {
-        long tiempoRecibido = System.currentTimeMillis() - tiempoInicioAtleta;
-        /*logger.info(String.format("%sEquipo %s - %s: %s - Tiempo acumulado: %d ms%s",
-                equipo.getColor(), equipo.getNombre(), Thread.currentThread().getName(),
-                atleta.getActividad(), tiempoRecibido, Colores.RESET));
-        */
-        /*System.out.println(String.format("%s%s - %s: %s - Tiempo acumulado: %d ms%s",
-                equipo.getColor(), equipo.getNombre(), Thread.currentThread().getName(),
-                atleta.getActividad(), tiempoRecibido, Colores.RESET));
-    */
-        System.out.println(String.format("%sEquipo %s - Atleta %s: %s - Tiempo acumulado: %d ms%s",
-                equipo.getColor(), equipo.getNombre(),
-                Thread.currentThread().getName(), 
-                atleta.getActividad(), tiempoRecibido, Colores.RESET));
-    }
+    	long tiempoRecibido = atleta.getTiempoActividad();
+        
+        System.out.println(String.format("%s%s esta %s durante %s mes.",
+        		equipo.getColor(),Thread.currentThread().getName(),
+        		 atleta.getActividad(),
+        	 atleta.getTiempoActividad()));
+        
+        equipo.actualizarTiempoFinal(tiempoRecibido);
+	        
+        }
+    
     
 
 }

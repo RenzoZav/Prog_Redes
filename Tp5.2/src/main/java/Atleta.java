@@ -11,7 +11,7 @@ public class Atleta implements Runnable {
     private static final Random random = new Random();
     private final Lock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
-
+    
     public Atleta(Equipo equipo, String actividad) {
         this.equipo = equipo;
         this.actividad = actividad;
@@ -35,6 +35,7 @@ public class Atleta implements Runnable {
         try {
             this.tienePosta = false;
             siguienteAtleta.recibirPosta();
+            
         } finally {
             lock.unlock();
         }
@@ -51,11 +52,10 @@ public class Atleta implements Runnable {
             if (Thread.currentThread().isInterrupted()) return;
 
             long tiempoInicioAtleta = System.currentTimeMillis();
+           
             
-            System.out.println(Thread.currentThread().getName() + " está realizando la actividad durante " + tiempoActividad + " ms.");
             Thread.sleep(tiempoActividad);
             
-            long tiempoRecibido = System.currentTimeMillis() - tiempoInicioAtleta;
             equipo.getArbitro().registrarProgreso(equipo, this, tiempoInicioAtleta);
 
             equipo.pasarPosta(this);
@@ -66,7 +66,6 @@ public class Atleta implements Runnable {
             lock.unlock();
         }
     }
-
 
     public int getTiempoActividad() {
         return tiempoActividad;
