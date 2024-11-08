@@ -64,9 +64,11 @@ public class Arbitro {
                 equipo.getColor(), equipo.getNombre(), Thread.currentThread().getName(),
                 atleta.getActividad(), tiempoRecibido, Colores.RESET));
     */
-        System.out.println(String.format("%s - %s: %s - Tiempo acumulado: %d ms%s",
-                 equipo.getNombre(), Thread.currentThread().getName(),
+        System.out.println(String.format("%sEquipo %s - Atleta %s: %s - Tiempo acumulado: %d ms%s",
+                equipo.getColor(), equipo.getNombre(),
+                Thread.currentThread().getName(), 
                 atleta.getActividad(), tiempoRecibido, Colores.RESET));
     }
+    
 
 }
