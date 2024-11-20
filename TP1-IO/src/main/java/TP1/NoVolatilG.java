@@ -184,62 +184,6 @@ public class NoVolatilG {
 		
 
 	}
-/*
-	public static void operacionesDosOrigenes(ArrayList<Integer> listaNums, File resultados, File error) {
-		FileOutputStream fosResultados = null;
-		FileOutputStream fosErrores = null;
-		PrintStream ps = new PrintStream(System.out);
-		FileReader fr = null;
-		BufferedReader br = null;
-		
-		String texto = "";
-		
-		//No me pegue profe es para que no se me junte demasiado en el bloc T.T
-		
-		resultados.delete();
-		error.delete();
-		
-		try {
-			fosResultados = new FileOutputStream(resultados, true);
-			PrintStream psBlocR = new PrintStream(fosResultados); 
-			
-			fosErrores = new FileOutputStream(error, true);
-			PrintStream psBlocErrores= new PrintStream(fosErrores); 
-			
-			for (int i = 0; i < listaNums.size() - 1; i++) { 
-			    int num1 = listaNums.get(i);
-			    try {
-					   int operacion = num1 / 3;
-					   psBlocR.println(num1 + " / " + 3 + " = " + operacion);
-					   
-			    }catch (NullPointerException e) {
-	                psBlocErrores.println("faltan numeros " + (i + 1));
-	                psBlocErrores.flush();
-			    }
-			    psBlocR.flush();
-			}
-		}catch (FileNotFoundException e) {
-			Logger.getLogger(NoVolatilG.class.getName()).log(Level.WARNING, null, e);
-		} finally {
-			if (fosResultados != null) {
-				try {
-					fosResultados.close();
-				} catch (IOException e) {
-					Logger.getLogger(NoVolatilG.class.getName()).log(Level.WARNING, null, e);
-				}
-		}if (fosErrores != null) {
-            try {
-                fosErrores.close();
-            } catch (IOException e) {
-                Logger.getLogger(NoVolatilG.class.getName()).log(Level.WARNING, null, e);
-            }
-        }
-		}
-
-			
-
-	}
-	*/
 	public static ArrayList lecturaReader(File a) {
 		ArrayList <Integer> listaNums = new ArrayList();
 		
