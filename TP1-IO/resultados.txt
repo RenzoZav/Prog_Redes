@@ -1,0 +1,16 @@
+Aca es division por num2 - 3
+9 / 5 = 1
+Aca es division por num2 - 3
+8 / -3 = -2
+Aca es division por num2 - 3
+3 / -3 = -1
+Aca es division por 3
+9 / 3 = 3
+Aca es division por 3
+8 / 3 = 2
+Aca es division por 3
+0 / 3 = 0
+Aca es division por 3
+3 / 3 = 1
+Aca es division por 3
+0 / 3 = 0
