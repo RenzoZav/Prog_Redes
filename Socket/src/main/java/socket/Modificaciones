@@ -1,0 +1,10 @@
+Haciendo que funcione el comando "/salir",
+muestra mensaje en el servidor y al otro cliente
+
+
+1- Muestra mensaje si el cliente al queres hablar no esta.
+2- Un cliente puede listar todos los cliente conectados.
+3- Muestra mensaje distinto segun si es global o privado.
+4- Banear funciona pero no muestra por consola
+5- Filtrar insultos funciona, posible "error" tambien censura en el servidor
+6- no agregado da errores

@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +26,13 @@ public class Servidor extends Thread {
 	public static final String ANSI_RESET = "\u001B[0m";
 
 	PrintStream ps;
-	static LinkedList<ClienteCli> ClientesConectados;
+	//static LinkedList<ClienteCli> ClientesConectados;
+	private static final HashMap<String, ClienteCli> clientesConectados = new HashMap<>();
+
+	
+
+	private static final HashMap<String, Long> clientesBaneados = new HashMap<>();
+	private static final List<String> malasPalabras = Arrays.asList("puta", "trola", "pete", "tonto", "mama");
 
 	ServerSocket serverSock;
 	Socket sockCli;
@@ -36,22 +45,26 @@ public class Servidor extends Thread {
 			ps = new PrintStream(System.out);
 			dis = null;
 			dos = null;
-			ClientesConectados = new LinkedList<ClienteCli>();
+			//ClientesConectados = new LinkedList<ClienteCli>();
 
 			serverSock = new ServerSocket(puerto);
-			
+
 			// verificacion de clientes conectados
 			Thread verificarLista = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					while(true) {
-						for (ClienteCli cli : ClientesConectados) {
+					while (true) {
+						// ELIMINA CLIENTES DE BANEADOS SI VENCIO EL BAN
+						Servidor.clientesBaneados.entrySet()
+								.removeIf(entry -> System.currentTimeMillis() > entry.getValue());
+
+						for (ClienteCli cli : clientesConectados.values()) {
 							if (!cli.getSock().isConnected() || !cli.isConected()) {
-								ClientesConectados.remove(cli);
+								clientesConectados.remove(cli);
 								cli.notificarClientes(false);
 							}
 						}
-						//esto es precario
+						// esto es precario
 						try {
 							Thread.sleep(10000);
 						} catch (InterruptedException e) {
@@ -82,19 +95,44 @@ public class Servidor extends Thread {
 				ps.println(
 						Servidor.ANSI_CYAN + "Creando un cliente... esperado identificacion..." + Servidor.ANSI_RESET);
 				String nickName = dis.readUTF();
+				if (clientesConectados.containsKey(nickName)) {
+				    dos.writeUTF(Servidor.ANSI_RED + "El nickname ya está en uso." + Servidor.ANSI_RESET);
+				    sockCli.close();
+				} else {
+					ClienteCli cli = new ClienteCli(sockCli, nickName, dis, dos);
 
-				ClienteCli cli = new ClienteCli(sockCli, nickName, dis, dos);
-				ClientesConectados.add(cli);
+				    clientesConectados.put(nickName, cli);
+				    ps.println(Servidor.ANSI_RED + "El cliente " + cli.getNickName() + " accedio al servidor.\n"
+							+ Servidor.ANSI_RESET);
 
-				ps.println(Servidor.ANSI_RED + "El cliente " + cli.getNickName() + " accedio al servidor.\n"
-						+ Servidor.ANSI_RESET);
-
-				cli.getHilo().start();
-				cli.notificarClientes(true);
+					cli.getHilo().start();
+					cli.notificarClientes(true);
+				}
+//				ClienteCli cli = new ClienteCli(sockCli, nickName, dis, dos);
+//				clientesConectados.put(nickName, cli);
+				
+//				ps.println(Servidor.ANSI_RED + "El cliente " + cli.getNickName() + " accedio al servidor.\n"
+//						+ Servidor.ANSI_RESET);
+//
+//				cli.getHilo().start();
+//				cli.notificarClientes(true);
 			} catch (IOException ex) {
 				Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
 			} // catch
 		} // while
+		
 	}// run
+
+	
+	public static HashMap<String, Long> getClientesbaneados() {
+		return clientesBaneados;
+	}
+
+	public static List<String> getMalaspalabras() {
+		return malasPalabras;
+	}
+	public static HashMap<String, ClienteCli> getClientesconectados() {
+		return clientesConectados;
+	}
 
 }// class

@@ -30,7 +30,7 @@ public class Cliente {
 
 		try {
 			IP = InetAddress.getByName("localhost");
-			sock = new Socket(IP, puerto); //se conectar
+			sock = new Socket(IP, puerto); // se conectar
 
 			dis = new DataInputStream(sock.getInputStream());
 			dos = new DataOutputStream(sock.getOutputStream());
@@ -46,7 +46,9 @@ public class Cliente {
 
 				ps.println("Bienvenido " + nick);
 			}
-			ps.print("\t-> ");
+
+
+			ps.print("->");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -59,13 +61,14 @@ public class Cliente {
 			public void run() {
 				String msg = "";
 				try {
-					while (true && !msg.equalsIgnoreCase("/salir")) {
+					while (!msg.equalsIgnoreCase("/salir")) {
 						msg = buff.readLine();
-
 						dos.writeUTF(msg);
-						ps.print("\t->");
+						ps.print("->");
 					}
-					//sock.close();
+					// Si el mensaje es "/salir", cerrar conexión localmente
+					sock.close();
+					ps.println("Te has desconectado del servidor.");
 				} catch (IOException e) {
 					Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, e);
 				} // try
@@ -76,28 +79,26 @@ public class Cliente {
 		enviarMensajes.start();
 
 		// Hilo que leer datos permanentemente y los envia por la red.
-		Thread recibirMensaje = new Thread(
-				new Runnable() {	
-					@Override
-					public void run() {
-						String msg = "";
-						while( true && !msg.equalsIgnoreCase("/salir") )	{
-							try {								
-								msg=dis.readUTF();
-								ps.println( "\t".concat(msg) );
-								
-								ps.println("\t->");
-							} catch (IOException e) {
-								Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, e);
-							}
-						}//while
-						
-					}//run
-				}//runnable
-				);//thread
+		Thread recibirMensaje = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String msg = "";
+
+				try {
+					while (!msg.equalsIgnoreCase("/salir")) {
+						msg = dis.readUTF();
+						ps.println(msg);
+						ps.println("->");
+					} // while
+				} catch (IOException e) {
+					Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, e);
+				}
+
+			}// run
+		}// runnable
+		);// thread
 		recibirMensaje.setName("recibir");
 		recibirMensaje.start();
-		
-			
+
 	}
 }
