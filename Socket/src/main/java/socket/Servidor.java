@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -81,6 +82,41 @@ public class Servidor extends Thread {
 
 	@Override
 	public void run() {
+		new Thread(() -> {
+		    Scanner scanner = new Scanner(System.in);
+		    while (true) {
+		        System.out.print("Servidor -> ");
+		        String mensaje = scanner.nextLine();
+		        if (mensaje.startsWith("/mp ")) {
+		            String[] partes = mensaje.split(" ", 3);
+		            if (partes.length == 3) {
+		                String destino = partes[1];
+		                String mensajeMp = partes[2];
+
+		                if (clientesConectados.containsKey(destino)) {
+		                    try {
+								clientesConectados.get(destino).dosCliente.writeUTF(Servidor.ANSI_GREEN + "[Servidor MP]: " + mensajeMp + Servidor.ANSI_RESET);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+		                } else {
+		                    System.out.println("Cliente no encontrado.");
+		                }
+		            }
+		        } else {
+		            for (ClienteCli cli : clientesConectados.values()) {
+		                try {
+							cli.dosCliente.writeUTF(Servidor.ANSI_YELLOW + "[Servidor Global]: " + mensaje + Servidor.ANSI_RESET);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		            }
+		        }
+		    }
+		}).start();
+
 		while (true) {
 			try {
 				ps.println("Esperando conexion de un clinete...\n");
@@ -108,14 +144,6 @@ public class Servidor extends Thread {
 					cli.getHilo().start();
 					cli.notificarClientes(true);
 				}
-//				ClienteCli cli = new ClienteCli(sockCli, nickName, dis, dos);
-//				clientesConectados.put(nickName, cli);
-				
-//				ps.println(Servidor.ANSI_RED + "El cliente " + cli.getNickName() + " accedio al servidor.\n"
-//						+ Servidor.ANSI_RESET);
-//
-//				cli.getHilo().start();
-//				cli.notificarClientes(true);
 			} catch (IOException ex) {
 				Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
 			} // catch

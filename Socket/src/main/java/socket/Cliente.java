@@ -9,11 +9,12 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Cliente {
-
+	byte[] iv = Cifrado.generarIV();
 	InetAddress IP;
 	int puerto = 7777;
 	boolean nickEnviado = true;
@@ -47,7 +48,6 @@ public class Cliente {
 				ps.println("Bienvenido " + nick);
 			}
 
-
 			ps.print("->");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -60,10 +60,15 @@ public class Cliente {
 			@Override
 			public void run() {
 				String msg = "";
+				String clave = "1234567890123456";
+
 				try {
-					while (!msg.equalsIgnoreCase("/salir")) {
+					while (true && !msg.equalsIgnoreCase("/salir")) {
 						msg = buff.readLine();
-						dos.writeUTF(msg);
+						byte[] iv = Cifrado.generarIV();
+						String valorEncriptado = Cifrado.encriptar(clave, iv, msg);
+						String encriptadoFinal = Base64.getEncoder().encodeToString(iv) + ":" + valorEncriptado;
+						dos.writeUTF(encriptadoFinal);
 						ps.print("->");
 					}
 					// Si el mensaje es "/salir", cerrar conexión localmente
@@ -83,16 +88,25 @@ public class Cliente {
 			@Override
 			public void run() {
 				String msg = "";
+				String clave = "1234567890123456";
+				byte[] iv = Cifrado.generarIV();
+				while (true && !msg.equalsIgnoreCase("/salir")) {
+					try {
+						if (msg.equalsIgnoreCase("/listar")) {
+							msg = dis.readUTF();
+							ps.println("\t".concat(msg));
 
-				try {
-					while (!msg.equalsIgnoreCase("/salir")) {
-						msg = dis.readUTF();
-						ps.println(msg);
-						ps.println("->");
-					} // while
-				} catch (IOException e) {
-					Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, e);
-				}
+							ps.println("\t->");
+						} else {
+							msg = dis.readUTF();
+
+							ps.println("\t".concat(msg));
+						}
+
+					} catch (IOException e) {
+						Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, e);
+					}
+				} // while
 
 			}// run
 		}// runnable
